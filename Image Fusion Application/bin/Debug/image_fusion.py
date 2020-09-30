@@ -13,6 +13,18 @@ def get_saliency_map(img, height, width):
     img_grey = resize(img_grey, (height, width))
     return img_grey
 
+def fuseCoeff(cooef1, cooef2, method):
+
+    if (method == 'mean'):
+        cooef = (cooef1 + cooef2) / 2
+    elif (method == 'min'):
+        cooef = np.minimum(cooef1,cooef2)
+    elif (method == 'max'):
+        cooef = np.maximum(cooef1,cooef2)
+    else:
+        cooef = []
+
+    return cooef
 
 def replace_fusion(fusedImage, img_t, new_im, salient_image):
     threshold = float(sys.argv[5])
@@ -33,6 +45,42 @@ def saliency_fusion(fusedImage, img_t, new_im, salient_image):
                 fusedImage[i][j] = (thermal + visible) / quotient
     return fusedImage
 
+def wavelet_fusion(fusedImage, img_t, new_im, salient_image = 0):
+    import pywt
+
+    fusion_method = 'mean'
+    wavelet = 'db1'
+    fusedImage = np.zeros((new_im.shape[0] // 2 + 1, new_im.shape[1] // 2, 3)).astype(np.uint8) * 255
+    for ch in range(3):
+        coeff1 = pywt.wavedec2(img_t[:,:,ch], wavelet)
+        coeff2 = pywt.wavedec2(new_im[:,:,ch], wavelet)
+        fused_coeff = []
+        for i in range(len(coeff1) - 1):
+            if i == 0:
+                fused_coeff.append(fuseCoeff(coeff1[0], coeff2[0], fusion_method))
+            else:
+                c1 = fuseCoeff(coeff1[i][0], coeff2[i][0], fusion_method)
+                c2 = fuseCoeff(coeff1[i][1], coeff2[i][1], fusion_method)
+                c3 = fuseCoeff(coeff1[i][2], coeff2[i][2], fusion_method)
+                fused_coeff.append((c1, c2, c3))
+
+        fused = pywt.waverec2(fused_coeff, wavelet)
+        fused = np.multiply(np.divide(fused - np.min(fused),(np.max(fused) - np.min(fused))),255)
+        fused = fused.astype(np.uint8)
+
+        fusedImage[:,:,ch] = fused
+    fusedImage = (resize(fusedImage,(new_im.shape)) * 255).astype(np.uint8)
+    for i in range(fusedImage.shape[0]):
+        for j in range(fusedImage.shape[1]):
+            if salient_image[i,j] < 0.1:
+                fusedImage[i,j] = new_im[i,j]
+    # import matplotlib.pyplot as plt
+    # plt.imshow(fusedImage)
+    # plt.show()
+    return fusedImage
+
+
+
 def fusion(img_name,img_t,img_v, startX, startY, height, width):
     print(startX, startY, height, width)
     new_im = img_v[startX:startX + height, startY:startY + width]
@@ -41,15 +89,22 @@ def fusion(img_name,img_t,img_v, startX, startY, height, width):
     fusedImage = np.array(new_im)
 
     methods = {'Replace': replace_fusion,
-               'Saliency': saliency_fusion}
+               'Saliency': saliency_fusion,
+               'Wavelet': wavelet_fusion}
 
     fusion_method = sys.argv[4]
     fusedImage = methods[fusion_method](fusedImage, img_t, new_im, salient_image)
-
+    # import matplotlib.pyplot as plt
+    # plt.imshow(fusedImage)
+    # plt.show()
     for i in range(img_v.shape[0]):
         for j in range(img_v.shape[1]):
-            if i > startX and j > startY and i < (startX + height) and j < (startY + width):
+            if i >= startX and j >= startY and i < (startX + height) and j < (startY + width):
                 img_v[i][j] = fusedImage[i - startX][j - startY]
+
+    # import matplotlib.pyplot as plt
+    # plt.imshow(img_v)
+    # plt.show()
 
     try:
         io.imsave("results/final_image_"+ img_name +".png",img_v)

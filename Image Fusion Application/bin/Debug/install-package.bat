@@ -1,2 +1,2 @@
 @echo off
-pip install scikit-image
+pip install scikit-image PyWavelets

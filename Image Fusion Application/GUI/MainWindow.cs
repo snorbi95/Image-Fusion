@@ -11,18 +11,20 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Globalization;
 
 namespace Image_Fusion_Application
 {
     public partial class MainWindow : Form
     {
-        private string fileName;
-        private double bmpScaleX;
-        private double bmpScaleY;
-        private int bmpOffsetX;
-        private int bmpOffsetY;
-        private Image_Fusion_Application.IrbFileReader reader, readerVisible;
-        private Image_Fusion_Application.IrbImg imgStream, imgStreamVisible;
+        string fileName, fileExtension;
+        double bmpScaleX;
+        double bmpScaleY;
+        float[] temperatures;
+        int bmpOffsetX;
+        int bmpOffsetY;
+        Image_Fusion_Application.IrbFileReader reader, readerVisible;
+        Image_Fusion_Application.IrbImg imgStream, imgStreamVisible;
 
         public MainWindow()
         {
@@ -36,21 +38,38 @@ namespace Image_Fusion_Application
         //hokep kiolvasa a fajlbol
         public void readInfraredImage() {
             //irb fajl nevenek kiszedese
-            fileName = Path.GetFileName(filePath.Text).Split('.')[0];
-            reader = new Image_Fusion_Application.IrbFileReader(filePath.Text, "infrared");
-            imgStream = new Image_Fusion_Application.IrbImg(reader,"infrared");
-            //hoertekek alapjan a hokeprol az objektum kiszedese
-            getMask(imgStream.EnvironmentalTemp, imgStream.tempMatrix, imgStream.GetWidth(), imgStream.GetHeight());
-            ShowNextFrame();
+            try
+            {
+                fileName = Path.GetFileName(filePath.Text).Split('.')[0];
+                fileExtension = Path.GetFileName(filePath.Text).Split('.')[1];
+                reader = new Image_Fusion_Application.IrbFileReader(filePath.Text, fileExtension, "infrared");
+                imgStream = new Image_Fusion_Application.IrbImg(reader, "infrared");
+                //hoertekek alapjan a hokeprol az objektum kiszedese
+                getMask(imgStream.EnvironmentalTemp, imgStream.tempMatrix, imgStream.GetWidth(), imgStream.GetHeight());
+                ShowNextFrame();
+                var value = thresholdScroll.Value / 100.0;
+                var textValue = Math.Round((temperatures[0] + ((temperatures[1] - temperatures[0]) * value)) - 273, 1);
+                thresholdText.Text = textValue.ToString();
+            }
+            catch (Exception e) {
+                MessageBox.Show("Error while reading thermal image!\n" + e.Message);
+            }
         }
 
         //rgb kep kiolvasasa a fajlbol
         public void readVisibleImage() {
-            fileName = Path.GetFileName(filePath.Text).Split('.')[0];
-            readerVisible = new Image_Fusion_Application.IrbFileReader(filePath.Text, "visible");
-            imgStreamVisible = new Image_Fusion_Application.IrbImg(readerVisible,"visible", imgStream.Palette);
-            ShowNextVisibleFrame();
-        }
+            try
+            {
+                fileName = Path.GetFileName(filePath.Text).Split('.')[0];
+                fileExtension = Path.GetFileName(filePath.Text).Split('.')[1];
+                readerVisible = new Image_Fusion_Application.IrbFileReader(filePath.Text,fileExtension, "visible");
+                imgStreamVisible = new Image_Fusion_Application.IrbImg(readerVisible, "visible", imgStream.Palette);
+                ShowNextVisibleFrame();
+            }
+            catch (Exception e) {
+                MessageBox.Show("Error while reading RGB image!\n" + e.Message + "\n" + readerVisible.GetTextInfo());
+            }
+}
 
         private void ShowNextVisibleFrame()
         {
@@ -70,63 +89,41 @@ namespace Image_Fusion_Application
             {
                 string[] line = textInfo[i].Split('=');
                 if (line[0].CompareTo("BMP_Scale_X") == 0)
-                    bmpScaleX = Double.Parse(line[1].Split('\r')[0]);
+                    bmpScaleX = Double.Parse(line[1],CultureInfo.InvariantCulture);
                 if (line[0].CompareTo("BMP_Scale_Y") == 0)
-                    bmpScaleY = Double.Parse(line[1].Split('\r')[0]);
+                    bmpScaleY = Double.Parse(line[1], CultureInfo.InvariantCulture);
                 if (line[0].CompareTo("BMP_Offset_X") == 0)
-                    bmpOffsetX = Int32.Parse(line[1].Split('\r')[0]);
+                    bmpOffsetX = Int32.Parse(line[1], CultureInfo.InvariantCulture);
                 if (line[0].CompareTo("BMP_Offset_Y") == 0)
-                    bmpOffsetY = Int32.Parse(line[1].Split('\r')[0]);
+                    bmpOffsetY = Int32.Parse(line[1], CultureInfo.InvariantCulture);
 
             }
 
             //rgb kep kirajzolasa
             Bitmap bmp = new Bitmap(w, h);
 
-            var maxRedValue = float.MinValue;
-            var minRedValue = float.MaxValue;
-
-            var maxGreenValue = float.MinValue;
-            var minGreenValue = float.MaxValue;
-
-            var maxBlueValue = float.MinValue;
-            var minBlueValue = float.MaxValue;
-
-
-            for (int i = 0; i < w; i++)
-                for(int j = 0; j< h; j++)
-                    for(int k = 0; k < 3; k++)
-                    {
-                        maxRedValue = Math.Max(maxRedValue, img[i,j,0]);
-                        minRedValue = Math.Min(minRedValue, img[i,j,0]);
-
-                        maxGreenValue = Math.Max(maxGreenValue, img[i, j, 1]);
-                        minGreenValue = Math.Min(minGreenValue, img[i, j, 1]);
-
-                        maxBlueValue = Math.Max(maxBlueValue, img[i, j, 2]);
-                        minBlueValue = Math.Min(minBlueValue, img[i, j, 2]);
-                    }
-
-            float scaleRed = 255.0f / (maxRedValue - minRedValue);
-            float scaleGreen = 255.0f / (maxGreenValue - minGreenValue);
-            float scaleBlue = 255.0f / (maxBlueValue - minBlueValue);
-
             for (int i = 0; i < w; i++) {
                 for (int j = 0; j < h; j++)
                 {
-                    var red = (int)((img[i,j,0] - minRedValue) * scaleRed);
-                    var green = (int)((img[i, j, 1] - minGreenValue) * scaleGreen);
-                    var blue = (int)((img[i, j, 2] - minBlueValue) * scaleBlue);
+                    var red = (int)img[i, j, 0];
+                    var green = (int)img[i, j, 1];
+                    var blue = (int)img[i, j, 2];
                     var color = Color.FromArgb(red, green, blue);
+                    double hue;
+                    double saturation;
+                    double value;
+                    ColorToHSV(color, out hue, out saturation, out value);
+                    Color copy = ColorFromHSV(hue * 1.1, saturation * 1.5, value * 1.1);
                     //if (i % 100 == 0 && j % 100 == 0)
                     //    continue;
-                    bmp.SetPixel(i, j, color);
+                    bmp.SetPixel(i, j, copy);
                 }
             }
 
             VisibleImage.Image = bmp;
             //VisibleImage.Image = ApplyBrightness(VisibleImage.Image,0.20f);
         }
+
 
         private void ShowNextFrame()
         {
@@ -216,6 +213,7 @@ namespace Image_Fusion_Application
                     if (tempMatrix[i, j] > returnValues[1])
                         returnValues[1] = tempMatrix[i, j];
                 }
+            temperatures = returnValues;
             return returnValues;
         }
 

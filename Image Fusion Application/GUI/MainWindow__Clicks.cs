@@ -57,6 +57,11 @@ namespace Image_Fusion_Application
         private void fuseImages_Click(object sender, EventArgs e)
         {
             //kepek kimentese
+            if (ThermalImage.Image == null || VisibleImage.Image == null) {
+                MessageBox.Show("Error! Missing images!");
+                return;
+            }
+            
             ThermalImage.Image.Save(@"thermal\" + fileName + "_.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
             VisibleImage.Image.Save(@"visible\" + fileName + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
             maskImage.Image.Save(@"thermal\" + fileName + "_mask.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
@@ -78,7 +83,7 @@ namespace Image_Fusion_Application
                     break;
             }
             var script = @"image_fusion.py";
-            var command = $"python \"{script}\" \"{fileName}\" \"{bmpScaleX}\" \"{bmpScaleY}\" \"{method}\" \"{argument}\"";
+            var command = $"py \"{script}\" \"{fileName}\" \"{bmpScaleX}\" \"{bmpScaleY}\" \"{method}\" \"{argument}\"";
             var psi = new ProcessStartInfo("cmd","/c " + command);
             psi.Verb = "runas";
 
@@ -90,18 +95,21 @@ namespace Image_Fusion_Application
             var errors = "";
 
             var results = "";
-            using (var process = Process.Start(psi))
-            {
-                errors = process.StandardError.ReadToEnd();
-                results = process.StandardOutput.ReadToEnd();
+            try
+            { 
+                using (var process = Process.Start(psi))
+                {
+                    errors = process.StandardError.ReadToEnd();
+                    results = process.StandardOutput.ReadToEnd();
+                }
+                // 5) Display output
+                processOngoing.Text = "";
+                processOngoing.Refresh();
+                FusedImage.Image = Image.FromFile(@"results\final_image_" + fileName + ".png");
             }
-
-            // 5) Display output
-            Console.WriteLine(errors);
-            Console.WriteLine(results);
-            processOngoing.Text = "";
-            processOngoing.Refresh();
-            FusedImage.Image = Image.FromFile(@"results\final_image_" + fileName + ".png");
+            catch {
+                MessageBox.Show("Error while executing fusion algorithm!\n" + errors);
+            }
         }
 
         //fuzionalt kep teljes kepernyos uzemmod
@@ -140,7 +148,8 @@ namespace Image_Fusion_Application
         private void thresholdScroll_ValueChanged(object sender, EventArgs e)
         {
             var value = thresholdScroll.Value / 100.0;
-            thresholdText.Text = value.ToString();
+            var textValue = Math.Round((temperatures[0] + ((temperatures[1] - temperatures[0]) * value)) - 273,2);
+            thresholdText.Text = textValue.ToString();
         }
 
         private void ratioScroll_ValueChanged(object sender, EventArgs e)

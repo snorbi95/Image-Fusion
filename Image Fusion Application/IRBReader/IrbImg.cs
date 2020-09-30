@@ -1,6 +1,5 @@
 ﻿using System;
-
-
+using System.Windows.Forms;
 
 namespace Image_Fusion_Application
 {
@@ -78,13 +77,19 @@ namespace Image_Fusion_Application
 
         public IrbImg(IrbFileReader FileReader, string imgType, float[] palette = null, int imageIndex = 0)
         {
-            reader = FileReader;
-            if (palette != null)
-                Palette = palette;
-            if(imgType == "visible")
-                ReadVisibleImage(imageIndex);
-            else
-                ReadImage(imageIndex);
+            try
+            {
+                reader = FileReader;
+                if (palette != null)
+                    Palette = palette;
+                if (imgType == "visible")
+                    ReadVisibleImage(imageIndex);
+                else
+                    ReadImage(imageIndex);
+            }
+            catch (Exception e) {
+                MessageBox.Show("IrbImage feldolgozás hiba!\n" + e.Message);
+            }
         }
 
 
@@ -148,29 +153,20 @@ namespace Image_Fusion_Application
             Height = reader.ReadWordBE();
 
 
-            UpperLeftX = reader.ReadWordBE(); //-- don't know - alway 0
-            UpperLeftY = reader.ReadWordBE(); //-- don't know - alway 0
+            UpperLeftX = reader.ReadWordBE(); 
+            UpperLeftY = reader.ReadWordBE(); 
 
             FirstValidX = reader.ReadWordBE();
-            //- dont know why but it is alwasy the width -1 
-            if (i != (Width - 1))
-            {
-                //logging.addError("??? value != (Height - 1)");
-            }
 
 
-            LastValidX = reader.ReadWordBE(); //-- don't know - alway 0
+            LastValidX = reader.ReadWordBE(); 
 
-            //- dont know why but it is alwasy the height -1 
+
             FirstValidY = reader.ReadWordBE();
-            if (i != (Height - 1))
-            {
-                //logging.addError("??? value != (Height - 1)");
-            }
 
 
-            LastValidY = reader.ReadWordBE(); //-- don't know - alway 0
-            Position = reader.ReadSingleBE(); //-- don't know - alway 0
+            LastValidY = reader.ReadWordBE(); 
+            Position = reader.ReadSingleBE(); 
 
             Emissivity = reader.ReadSingleBE();
 
@@ -179,14 +175,14 @@ namespace Image_Fusion_Application
             EnvironmentalTemp = reader.ReadSingleBE();
 
 
-            AbsoConst = reader.ReadSingleBE(); //-- don't know - always 0
-            PathTemperature = reader.ReadSingleBE(); //-- don't know - always 0
-            Version = reader.ReadLongBE(); //-- don't know - always 0x65
+            AbsoConst = reader.ReadSingleBE(); 
+            PathTemperature = reader.ReadSingleBE(); 
+            Version = reader.ReadLongBE(); 
 
             //for (int pos = 0; pos < 1567; pos++)
             //    cbData[pos] = reader.ReadByte();
 
-            Level = reader.ReadSingleBE(); //-- don't know - always 0
+            Level = reader.ReadSingleBE(); 
             Span = reader.ReadSingleBE();
             ImgTime = reader.ReadDoubleBE(8);
             ImgMilliTime = reader.ReadIntBE();
@@ -197,28 +193,26 @@ namespace Image_Fusion_Application
             ZoomVertical = reader.ReadSingleBE();
 
 
-            i = reader.ReadWordBE(); //-- don't know - always 0
-            i = reader.ReadWordBE(); //-- don't know - always 0xH4080
-            i = reader.ReadWordBE(); //-- don't know - always 0x9
-            i = reader.ReadWordBE(); //-- don't know - always 0x101
+            i = reader.ReadWordBE(); 
+            i = reader.ReadWordBE(); 
+            i = reader.ReadWordBE(); 
+            i = reader.ReadWordBE(); 
 
 
             if ((Width > 10000) || (Height > 10000))
             {
-                //logging.addError("Defect Irbis Image File: Image Width(" + Width + ") or Height(" + Height + ") is out of range!");
                 Width = 1;
                 Height = 1;
                 return false;
             }
 
-            //- liest weitere Bildinforationen aus
             this.ReadFlags(reader, 1084);
 
             Data = ReadImageData(reader, 0x6C0, Width, Height, 60, Compressed);
 
 
 
-            if (reader.Eof) return false; //logging.addError("end of file!");
+            if (reader.Eof) return false; 
 
             return true;
         }
@@ -247,9 +241,7 @@ namespace Image_Fusion_Application
 
             VisibleData = ReadVisibleImageData(reader, 8468, Width, Height, 276, Compressed);
 
-
-
-            if (reader.Eof) return false; //logging.addError("end of file!");
+            if (reader.Eof) return false; 
 
             return true;
         }
@@ -277,8 +269,8 @@ namespace Image_Fusion_Application
             TimeStamp_Raw = reader.ReadDoubleBE(8, offset + 540);
             TimeStampMilliseconds = reader.ReadIntBE(offset + 548);
             ImgAccu = reader.ReadWordBE(offset + 580);
-            ZoomHorizontal = reader.ReadSingleBE(offset + 596);
-            ZoomVertical = reader.ReadSingleBE(offset + 604);
+            ZoomHorizontal = reader.ReadWordBE(offset + 596);
+            ZoomVertical = reader.ReadWordBE(offset + 604);
             TimeStamp = Double2DateTime(TimeStamp_Raw, TimeStampMilliseconds);
         }
 
@@ -452,7 +444,7 @@ namespace Image_Fusion_Application
                     f3 = (float)v3 * (1.0f / 256.0f);
 
                     //- lineare interpolation
-                    v = Palette[v2 + 1] * f1 + Palette[v2] * (1.0f - f1); //v1 v2
+                    v = Palette[v1 + 1] * f1 + Palette[v2] * (1.0f - f1); //v1 v2
 
                     if (v < 0) v = 0; //- oder 255
 
@@ -492,13 +484,29 @@ namespace Image_Fusion_Application
                     imageMatrix[i, j] = matrixData[matrixDataPos];
             }
 
+            var minValue = float.MaxValue;
+            var maxValue = float.MinValue;
+
+            for(int i = 0; i < Width; i++)
+                for(int j = 0; j < Height; j++)
+                {
+                    maxValue = Math.Max(maxValue, imageMatrix[i, j]);
+                    minValue = Math.Min(minValue, imageMatrix[i, j]);
+                }
+
+            var imageScale = 255.0f / (maxValue - minValue);
+
+            for (int i = 0; i < Width; i++)
+                for (int j = 0; j < Height; j++)
+                    imageMatrix[i,j] = (int)((imageMatrix[i, j] - minValue) * imageScale);
+
             float[,,] rgbImageMatrix = new float[Width, Height, 3];
 
             for (int i = 1; i < Width - 1; i++)
                 for (int j = 1; j < Height - 1; j++) {
                     //blue
-                          if (i % 2 == 0 && j % 2 == 0)
-                        {
+                    if (i % 2 == 0 && j % 2 == 0)
+                    {
                         rgbImageMatrix[i, j, 0] = (imageMatrix[i - 1, j - 1] + imageMatrix[i - 1, j + 1] + imageMatrix[i + 1, j - 1] + imageMatrix[i + 1, j + 1]) / 4;
                         rgbImageMatrix[i, j, 1] = (imageMatrix[i - 1, j] + imageMatrix[i, j - 1] + imageMatrix[i, j + 1] + imageMatrix[i + 1, j]) / 4;
                         rgbImageMatrix[i, j, 2] = imageMatrix[i, j];
@@ -516,11 +524,11 @@ namespace Image_Fusion_Application
                         rgbImageMatrix[i, j, 1] = (imageMatrix[i - 1, j] + imageMatrix[i, j - 1] + imageMatrix[i, j + 1] + imageMatrix[i + 1, j]) / 4;
                         rgbImageMatrix[i, j, 2] = (imageMatrix[i - 1, j - 1] + imageMatrix[i - 1, j + 1] + imageMatrix[i + 1, j - 1] + imageMatrix[i + 1, j + 1]) / 4;
 
-                        float[] mat = { rgbImageMatrix[i, j, 0], rgbImageMatrix[i, j, 1], rgbImageMatrix[i, j, 2] };
+                        //float[] mat = { rgbImageMatrix[i, j, 0], rgbImageMatrix[i, j, 1], rgbImageMatrix[i, j, 2] };
 
-                        var res = applySaturation(mat, 1.5f);
-                        for (int k = 0; k < 3; k++)
-                            rgbImageMatrix[i, j, k] = res[k];
+                        //var res = applySaturation(mat, 1.5f);
+                        //for (int k = 0; k < 3; k++)
+                        //    rgbImageMatrix[i, j, k] = res[k];
                     } 
                 }
 

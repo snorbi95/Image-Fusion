@@ -1,4 +1,7 @@
-﻿namespace Image_Fusion_Application
+﻿using System;
+using System.Windows.Forms;
+
+namespace Image_Fusion_Application
 {
     class IrbFileReader
     {
@@ -65,61 +68,56 @@
 
 
         //-------------------------------------//
-        public IrbFileReader(string filename, string imgType)
+        public IrbFileReader(string filename,string fileType, string imgType)
         {
-            this.m_imageCount = 0;
-            ImgType = imgType;
-            reader = new StreamReader(filename);
-
-
-            Head.MagicNumber = reader.ReadStr(5);
-
-            //- ID
-            if (string.Compare(Head.MagicNumber, "\xFFIRB\0") != 0) //-- soll "\xFF" "IRB" "\0" aber C schneidet das \0 weg!
+            try
             {
-                //logging.addError("Irb File - ''Magische Number'' wrong");
-                return;
-            }
+                this.m_imageCount = 0;
+                ImgType = imgType;
+                reader = new StreamReader(filename);
 
-            //- FileType
-            Head.FileType = reader.ReadStr(8);
-
-            if (string.Compare(Head.FileType, "IRBACS\0\0") != 0)
-            {
-                Head.FileType2enum = enumFileType.enumFileTypeImage;
-            }
-            else if (string.Compare(Head.FileType, "IRBIS 3\0") != 0)
-            {
-                Head.FileType2enum = enumFileType.enumFileTypeSequenz;
-            }
-            else
-            {
-                //logging.addError("Unknown Irbis File Type");
-                return;
-            }
-
-
-
-            Head.FileType2 = reader.ReadStr(8);
-
-            Head.Flag1 = reader.ReadIntBE();
-            Head.BlockOffset = reader.ReadIntBE(); //- starts at 0
-            Head.FirstBlockCount = reader.ReadIntBE();
-
-            Head.BlockCount = 0;
-            this.AddHead(Head.BlockOffset, Head.FirstBlockCount);
-
-            int i = 0;
-            while (i < Head.BlockCount)
-            {
-                if (Head.Block[i].BlockType == enumBlockType.enumBlockTypeHeader)
+                if (fileType.ToLower() != "irb")
                 {
-                    this.AddHead(Head.Block[i].offset, 2);
+                    return;
                 }
-                i++;
+
+                Head.MagicNumber = reader.ReadStr(5);
+
+                //- FileType
+                Head.FileType = reader.ReadStr(8);
+
+                if (string.Compare(Head.FileType, "IRBACS\0\0") != 0)
+                {
+                    Head.FileType2enum = enumFileType.enumFileTypeImage;
+                }
+                else if (string.Compare(Head.FileType, "IRBIS 3\0") != 0)
+                {
+                    Head.FileType2enum = enumFileType.enumFileTypeSequenz;
+                }
+
+
+                Head.FileType2 = reader.ReadStr(8);
+
+                Head.Flag1 = reader.ReadIntBE();
+                Head.BlockOffset = reader.ReadIntBE(); //- starts at 0
+                Head.FirstBlockCount = reader.ReadIntBE();
+
+                Head.BlockCount = 0;
+                this.AddHead(Head.BlockOffset, Head.FirstBlockCount);
+
+                int i = 0;
+                while (i < Head.BlockCount)
+                {
+                    if (Head.Block[i].BlockType == enumBlockType.enumBlockTypeHeader)
+                    {
+                        this.AddHead(Head.Block[i].offset, 2);
+                    }
+                    i++;
+                }
             }
-
-
+            catch (Exception e) {
+                MessageBox.Show("IRBFileREader hiba!\n" + e.Message);
+            }
         }
 
         //-------------------------------------------------------//
@@ -169,11 +167,10 @@
             block.FrameIndex = reader.ReadIntBE();
 
 
-            block.offset = reader.ReadIntBE(); // starts at 0
+            block.offset = reader.ReadIntBE();
 
             block.size = reader.ReadIntBE();
 
-            //- head is wlways 0x6C0 Byte in lengtg
             block.headerSize = 0x6C0;
             if (block.headerSize > block.size) block.headerSize = block.size;
 
@@ -313,11 +310,9 @@
 
             if (blockIndex < 0)
             {
-                //logging.addError("getImageData(imageIndex) fail - ImageIndex: " + imageIndex + " not found");
                 return null;
             }
 
-            //- Header zurückgeben
             tyBlock block = Head.Block[blockIndex];
             return reader.ReadByte(block.size, block.offset);
         }
@@ -354,7 +349,7 @@
         }
 
         /// <summary>
-        /// Retrun the data block for a given image index
+        /// Return the data block for a given image index
         /// </summary>
         private int GetImageBlockIndex(int imageIndex)
         {

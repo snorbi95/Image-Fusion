@@ -58,6 +58,7 @@
             this.visibleFolderButton = new System.Windows.Forms.Button();
             this.thermalFolderButton = new System.Windows.Forms.Button();
             this.fusedFolderButton = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.VisibleImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ThermalImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FusedImage)).BeginInit();
@@ -79,7 +80,7 @@
             // 
             this.ThermalImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ThermalImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ThermalImage.Location = new System.Drawing.Point(877, 126);
+            this.ThermalImage.Location = new System.Drawing.Point(853, 126);
             this.ThermalImage.Name = "ThermalImage";
             this.ThermalImage.Size = new System.Drawing.Size(480, 320);
             this.ThermalImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -91,7 +92,7 @@
             // 
             this.FusedImage.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.FusedImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.FusedImage.Location = new System.Drawing.Point(437, 529);
+            this.FusedImage.Location = new System.Drawing.Point(425, 506);
             this.FusedImage.Name = "FusedImage";
             this.FusedImage.Size = new System.Drawing.Size(480, 320);
             this.FusedImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -104,7 +105,7 @@
             this.openIRB.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.openIRB.AutoSize = true;
             this.openIRB.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.openIRB.Location = new System.Drawing.Point(16, 35);
+            this.openIRB.Location = new System.Drawing.Point(4, 35);
             this.openIRB.Name = "openIRB";
             this.openIRB.Size = new System.Drawing.Size(165, 25);
             this.openIRB.TabIndex = 3;
@@ -113,7 +114,7 @@
             // filePath
             // 
             this.filePath.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.filePath.Location = new System.Drawing.Point(187, 35);
+            this.filePath.Location = new System.Drawing.Point(175, 35);
             this.filePath.Multiline = true;
             this.filePath.Name = "filePath";
             this.filePath.Size = new System.Drawing.Size(614, 25);
@@ -122,7 +123,7 @@
             // loadIRB
             // 
             this.loadIRB.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.loadIRB.Location = new System.Drawing.Point(868, 35);
+            this.loadIRB.Location = new System.Drawing.Point(856, 35);
             this.loadIRB.Name = "loadIRB";
             this.loadIRB.Size = new System.Drawing.Size(119, 25);
             this.loadIRB.TabIndex = 5;
@@ -145,7 +146,7 @@
             this.thermalImageLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.thermalImageLabel.AutoSize = true;
             this.thermalImageLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.thermalImageLabel.Location = new System.Drawing.Point(936, 98);
+            this.thermalImageLabel.Location = new System.Drawing.Point(912, 98);
             this.thermalImageLabel.Name = "thermalImageLabel";
             this.thermalImageLabel.Size = new System.Drawing.Size(167, 25);
             this.thermalImageLabel.TabIndex = 7;
@@ -154,7 +155,7 @@
             // fuseImages
             // 
             this.fuseImages.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.fuseImages.Location = new System.Drawing.Point(619, 498);
+            this.fuseImages.Location = new System.Drawing.Point(607, 475);
             this.fuseImages.Name = "fuseImages";
             this.fuseImages.Size = new System.Drawing.Size(119, 25);
             this.fuseImages.TabIndex = 8;
@@ -172,7 +173,7 @@
             "BlueToRed",
             "Fire",
             "Grayscale"});
-            this.thermalType.Location = new System.Drawing.Point(1109, 102);
+            this.thermalType.Location = new System.Drawing.Point(1085, 102);
             this.thermalType.Name = "thermalType";
             this.thermalType.Size = new System.Drawing.Size(121, 21);
             this.thermalType.TabIndex = 9;
@@ -180,7 +181,7 @@
             // getFilePath
             // 
             this.getFilePath.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.getFilePath.Location = new System.Drawing.Point(807, 35);
+            this.getFilePath.Location = new System.Drawing.Point(795, 35);
             this.getFilePath.Name = "getFilePath";
             this.getFilePath.Size = new System.Drawing.Size(38, 25);
             this.getFilePath.TabIndex = 10;
@@ -191,7 +192,7 @@
             // repaintThermalImage
             // 
             this.repaintThermalImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.repaintThermalImage.Location = new System.Drawing.Point(1238, 102);
+            this.repaintThermalImage.Location = new System.Drawing.Point(1214, 102);
             this.repaintThermalImage.Name = "repaintThermalImage";
             this.repaintThermalImage.Size = new System.Drawing.Size(119, 21);
             this.repaintThermalImage.TabIndex = 11;
@@ -204,7 +205,7 @@
             this.processOngoing.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.processOngoing.AutoSize = true;
             this.processOngoing.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.processOngoing.Location = new System.Drawing.Point(757, 498);
+            this.processOngoing.Location = new System.Drawing.Point(745, 475);
             this.processOngoing.Name = "processOngoing";
             this.processOngoing.Size = new System.Drawing.Size(0, 25);
             this.processOngoing.TabIndex = 13;
@@ -213,7 +214,7 @@
             // 
             this.maskImage.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.maskImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.maskImage.Location = new System.Drawing.Point(437, 529);
+            this.maskImage.Location = new System.Drawing.Point(425, 506);
             this.maskImage.Name = "maskImage";
             this.maskImage.Size = new System.Drawing.Size(480, 320);
             this.maskImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -226,7 +227,7 @@
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(16, 529);
+            this.label1.Location = new System.Drawing.Point(16, 506);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(179, 25);
             this.label1.TabIndex = 15;
@@ -242,18 +243,20 @@
             this.fusionMethods.FormattingEnabled = true;
             this.fusionMethods.Items.AddRange(new object[] {
             "Replace",
-            "Saliency"});
-            this.fusionMethods.Location = new System.Drawing.Point(21, 573);
+            "Saliency",
+            "Wavelet"});
+            this.fusionMethods.Location = new System.Drawing.Point(21, 550);
             this.fusionMethods.Name = "fusionMethods";
-            this.fusionMethods.Size = new System.Drawing.Size(120, 42);
+            this.fusionMethods.Size = new System.Drawing.Size(120, 63);
             this.fusionMethods.TabIndex = 16;
+            this.fusionMethods.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.fusionMethods_ItemCheck);
             // 
             // label2
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(970, 529);
+            this.label2.Location = new System.Drawing.Point(946, 506);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(173, 25);
             this.label2.TabIndex = 17;
@@ -264,7 +267,7 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(971, 573);
+            this.label3.Location = new System.Drawing.Point(947, 550);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(236, 20);
             this.label3.TabIndex = 18;
@@ -275,7 +278,7 @@
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(971, 653);
+            this.label4.Location = new System.Drawing.Point(947, 630);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(201, 20);
             this.label4.TabIndex = 19;
@@ -284,7 +287,7 @@
             // thresholdScroll
             // 
             this.thresholdScroll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.thresholdScroll.Location = new System.Drawing.Point(975, 614);
+            this.thresholdScroll.Location = new System.Drawing.Point(966, 591);
             this.thresholdScroll.Maximum = 109;
             this.thresholdScroll.Name = "thresholdScroll";
             this.thresholdScroll.Size = new System.Drawing.Size(255, 20);
@@ -295,7 +298,7 @@
             // ratioScroll
             // 
             this.ratioScroll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ratioScroll.Location = new System.Drawing.Point(990, 697);
+            this.ratioScroll.Location = new System.Drawing.Point(966, 674);
             this.ratioScroll.Maximum = 109;
             this.ratioScroll.Name = "ratioScroll";
             this.ratioScroll.Size = new System.Drawing.Size(259, 22);
@@ -308,7 +311,7 @@
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(938, 697);
+            this.label5.Location = new System.Drawing.Point(914, 674);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(49, 16);
             this.label5.TabIndex = 22;
@@ -319,7 +322,7 @@
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(1261, 697);
+            this.label6.Location = new System.Drawing.Point(1237, 674);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(58, 16);
             this.label6.TabIndex = 23;
@@ -328,15 +331,15 @@
             // thresholdText
             // 
             this.thresholdText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.thresholdText.Location = new System.Drawing.Point(1340, 614);
+            this.thresholdText.Location = new System.Drawing.Point(1304, 591);
             this.thresholdText.Name = "thresholdText";
-            this.thresholdText.Size = new System.Drawing.Size(72, 20);
+            this.thresholdText.Size = new System.Drawing.Size(47, 20);
             this.thresholdText.TabIndex = 24;
             // 
             // ratioText
             // 
             this.ratioText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ratioText.Location = new System.Drawing.Point(1340, 697);
+            this.ratioText.Location = new System.Drawing.Point(1301, 673);
             this.ratioText.Name = "ratioText";
             this.ratioText.Size = new System.Drawing.Size(72, 20);
             this.ratioText.TabIndex = 25;
@@ -360,7 +363,7 @@
             // 
             this.thermalFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.thermalFolderButton.Image = global::Image_Fusion_Application.Properties.Resources.folder_icon1;
-            this.thermalFolderButton.Location = new System.Drawing.Point(877, 84);
+            this.thermalFolderButton.Location = new System.Drawing.Point(853, 84);
             this.thermalFolderButton.Name = "thermalFolderButton";
             this.thermalFolderButton.Size = new System.Drawing.Size(50, 39);
             this.thermalFolderButton.TabIndex = 27;
@@ -371,12 +374,23 @@
             // 
             this.fusedFolderButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.fusedFolderButton.Image = global::Image_Fusion_Application.Properties.Resources.folder_icon1;
-            this.fusedFolderButton.Location = new System.Drawing.Point(437, 484);
+            this.fusedFolderButton.Location = new System.Drawing.Point(425, 461);
             this.fusedFolderButton.Name = "fusedFolderButton";
             this.fusedFolderButton.Size = new System.Drawing.Size(50, 39);
             this.fusedFolderButton.TabIndex = 28;
             this.fusedFolderButton.UseVisualStyleBackColor = true;
             this.fusedFolderButton.Click += new System.EventHandler(this.fusedFolderButton_Click);
+            // 
+            // label7
+            // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(1352, 591);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(25, 20);
+            this.label7.TabIndex = 29;
+            this.label7.Text = "°C";
             // 
             // MainWindow
             // 
@@ -384,7 +398,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.AutoScrollMinSize = new System.Drawing.Size(1400, 850);
-            this.ClientSize = new System.Drawing.Size(1424, 873);
+            this.ClientSize = new System.Drawing.Size(1370, 749);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.fusedFolderButton);
             this.Controls.Add(this.thermalFolderButton);
             this.Controls.Add(this.visibleFolderButton);
@@ -455,5 +470,6 @@
         private System.Windows.Forms.Button visibleFolderButton;
         private System.Windows.Forms.Button thermalFolderButton;
         private System.Windows.Forms.Button fusedFolderButton;
+        private System.Windows.Forms.Label label7;
     }
 }

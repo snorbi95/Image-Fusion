@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-
+using System.Windows.Forms;
 
 namespace Image_Fusion_Application
 {
@@ -59,6 +59,7 @@ namespace Image_Fusion_Application
             catch (System.Exception ex)
             {
                 //logging.addError("IO.BinaryReader fail", ex.Message, filename);
+                MessageBox.Show(ex.Message);
                 return;
             }
 
